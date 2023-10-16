@@ -1,0 +1,164 @@
+import java.util.Scanner;
+
+public abstract class BattleShips {
+    private int numRows;
+    private int numColums;
+    private int playerShips;
+    private int computerShips;
+
+    protected Map gridPlayer;
+    protected Map gridComputer;
+    protected Map gridMap;
+
+    private int levelGame;
+
+    //Constructor
+    public BattleShips() {
+    }
+
+    public BattleShips(int numRows, int numColums, int playerShips, int computerShips, int levelGame) {
+        this.numRows = numRows;
+        this.numColums = numColums;
+        this.playerShips = playerShips;
+        this.computerShips = computerShips;
+        this.levelGame = levelGame;
+        //Khởi tạo mảng
+    }
+
+    //Getter và Setter
+    public int getNumRows() {
+        return numRows;
+    }
+
+    public void setNumRows(int numRows) {
+        this.numRows = numRows;
+    }
+
+    public int getNumColums() {
+        return numColums;
+    }
+
+    public void setNumColums(int numColums) {
+        this.numColums = numColums;
+    }
+
+    public int getPlayerShips() {
+        return playerShips;
+    }
+
+    public void setPlayerShips(int playerShips) {
+        this.playerShips = playerShips;
+    }
+
+    public int getComputerShips() {
+        return computerShips;
+    }
+
+    public void setComputerShips(int computerShips) {
+        this.computerShips = computerShips;
+    }
+
+    public int getLevelGame() {
+        return levelGame;
+    }
+
+    public void setLevelGame(int levelGame) {
+        this.levelGame = levelGame;
+    }
+
+    //Cấu trúc của game BattleShips
+    public void inputData() {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Mời bạn nhập số hàng(Row): ");
+        setNumRows(Integer.parseInt(sc.nextLine()));
+        System.out.print("Mời bạn nhập số cột(Colum): ");
+        setNumColums(Integer.parseInt(sc.nextLine()));
+        System.out.print("Mời bạn nhập số thuyền của BẠN: ");
+        setPlayerShips(Integer.parseInt(sc.nextLine()));
+        System.out.print("Mời bạn nhập số thuyền của COMPUTER: ");
+        setComputerShips(Integer.parseInt(sc.nextLine()));
+        this.gridPlayer = new Map(getNumRows(), getNumColums());
+        this.gridComputer = new Map(getNumRows(), getNumColums());
+        this.gridMap = new Map(getNumRows(), getNumColums());
+    }
+
+    public void createOceanMap() {
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numColums; j++) {
+                gridPlayer.setValue(i, j, " ");
+                gridComputer.setValue(i, j, " ");
+                gridMap.setValue(i, j, " ");
+            }
+        }
+        //In ra xem thử map vừa tạo
+        gridMap.printOceanMap();
+        System.out.println();
+    }
+
+    public void deployPlayerShips() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\nTriển khai thuyền của bạn:");
+        //Deploying five ships for player
+        for (int i = 1; i <= getPlayerShips(); ) {
+            System.out.print("Nhập tọa độ X cho thuyền thứ " + i + " : ");
+            int x = sc.nextInt();
+            System.out.print("Nhập tọa độ Y cho thuyền thứ " + i + " : ");
+            int y = sc.nextInt();
+            if (checkGrid(x, y) && (gridPlayer.getValue(x, y).equals(" "))) {
+                gridMap.setValue(x, y, "P"); //PLayer
+                gridPlayer.setValue(x, y, "P");
+                i++;
+            } else if (checkGrid(x, y) && gridPlayer.getValue(x, y).equals("P"))
+                System.out.println("Bạn không thể đặt nhiều hơn một thuyền tại cùng một vị trí!");
+            else if (!checkGrid(x, y))
+                System.out.println("Bạn không thể đặt ngoài kích thước map đã quy định: " + getNumRows() + " và " + getNumColums());
+        }
+        //In map của Player
+        gridPlayer.printOceanMap();
+    }
+
+    public abstract void deployComputerShips();
+
+    public abstract void playerTurn();
+
+    public abstract void computerTurn();
+
+    public void Battle() {
+        playerTurn();
+        if (getPlayerShips() != -1) {
+            //Kiểm tra nếu nhập
+            if (getComputerShips() > 0) computerTurn();
+            System.out.println();
+            System.out.println("Số thuyền của bạn: " + getPlayerShips() + " | Số thuyền của Computer: " + getComputerShips());
+            System.out.println();
+        }
+    }
+
+    public void gameOver() {
+        System.out.println("====> Kết quả <====");
+        System.out.println("Số thuyền của bạn: " + getPlayerShips() + " | Số thuyền của Computer: " + getComputerShips());
+        if (getPlayerShips() > 0 && getComputerShips() <= 0)
+            System.out.println("Yeah! Bạn đã THẮNG Game Battle Ships!!! :>");
+        else
+            System.out.println("Chia buồn! Bạn đã THUA Game Battle Ships!!! :<");
+        //In map tổng quát
+        gridMap.printOceanMap();
+    }
+
+    //Kiểm tra có thuộc bản đồ không
+    public boolean checkGrid(int x, int y) {
+        boolean flag = true;
+        if ((x < 0 || x >= getNumRows()) || (y < 0 || y >= getNumColums())) flag = false;
+        return flag;
+    }
+
+    //Kiểm tra máy có lặp lại lựa chọn không
+    public boolean checkRepeatComputer(int x, int y) {
+        boolean flag = false;
+        if ((gridComputer.getValue(x, y).equals("-")) || (gridComputer.getValue(x, y).equals("x"))
+                || (gridComputer.getValue(x, y).equals("D")) || (gridMap.getValue(x, y).equals("D"))
+                || gridComputer.getValue(x, y).equals("l") || gridComputer.getValue(x, y).equals("L")) flag = true;
+        return flag;
+    }
+
+}
