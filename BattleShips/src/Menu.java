@@ -86,7 +86,7 @@ public class Menu implements FileName {
             playerChoice = Integer.parseInt(sc.nextLine());
             switch (playerChoice) {
                 case 1:
-                    int choice = -1;
+                    int choice;
                     listGame.removeAllGame();
                     if (fileExist(user.getNameID() + ".txt"))
                         listGame.updateListGameFromFile(user.getNameID() + ".txt");
@@ -141,12 +141,12 @@ public class Menu implements FileName {
             else {
                 notificationMess();
             }
-        } while (playerChoice != 1 && playerChoice != 2); //Vì chỉ muốn trả lời 1 trong 2
+        } while (true); //Vì chỉ muốn trả lời 1 trong 2
         System.out.println();
     }
 
     public void playerChoice() {
-        int playerChoice = 0;
+        int playerChoice;
         System.out.println("**** Chào mừng đến với Battle Ships Game ****");
 
         do {
@@ -156,36 +156,37 @@ public class Menu implements FileName {
                 case 0:
                     break;
                 case 1:
+                    user.printInformationUser();
+                    break;
+                case 2:
                     System.out.println("Mời bạn chon độ khó: ");
                     System.out.println("1.Dễ\t2.Trung bình");
-                    int choice = 0;
+                    int choice;
                     do {
                         choice = Integer.parseInt(sc.nextLine());
                         switch (choice) {
-                            case 1:
+                            case 1 -> {
                                 bs.setLevelGame(1);
                                 startBattleShips_TypeOne();//Done!
-                                break;
-                            case 2:
+                            }
+                            case 2 -> {
                                 bs.setLevelGame(2);
                                 startBattleShips_TypeOne();//Done!
-                                break;
-                            default:
-                                notificationMess();//Done!
-                                break;
+                            }
+                            default -> notificationMess();//Done!
                         }
                     } while (choice != 1 && choice != 2);
                     break;
-                case 2:
+                case 3:
                     playerChoiceForBattleShips_Still();
                     break;
-                case 3:
+                case 4:
                     detailInformationSymbols();//Done!
                     break;
-                case 4:
+                case 5:
                     printListGame();//Done!
                     break;
-                case 5://Xóa game
+                case 6://Xóa game
                     //Đang phát triển
                     askForRemove();
                     break;
@@ -251,7 +252,7 @@ public class Menu implements FileName {
     }
 
     public void loginUser() {
-        int playerChoice = 0;
+        int playerChoice;
         do {
             System.out.println("====> CLIENT <====");
             System.out.println("1.Đăng nhập\n2.Đăng kí\n0.Thoát");
@@ -286,6 +287,7 @@ public class Menu implements FileName {
                     if (count == 3) break;
 
                     //Vô game
+                    user.setNamePlayer(listUser.getNamePlayerFromList(user.getNameID()));
                     playerChoice();
                     //Khởi tạo lại User mới để đăng nhập tiếp
                     listUser.removeAllUser();
@@ -309,11 +311,12 @@ public class Menu implements FileName {
 
     public void menu() {
         System.out.println("====> MENU <====");
-        System.out.println("1.Chơi!");
-        System.out.println("2.Chơi tiếp");
-        System.out.println("3.Thông tin chi tiết");
-        System.out.println("4.In các game đã lưu");
-        System.out.println("5.Xóa game đã lưu");
+        System.out.println("1.Thông tin tài khoản");
+        System.out.println("2.Chơi!");
+        System.out.println("3.Chơi tiếp");
+        System.out.println("4.Thông tin chi tiết");
+        System.out.println("5.In các game đã lưu");
+        System.out.println("6.Xóa game đã lưu");
         System.out.println("0.Thoát");
     }
 
@@ -350,7 +353,7 @@ public class Menu implements FileName {
 
     //Chức năng chơi tiếp
     public void playerChoiceForBattleShips_Still() {
-        int playerChoice = 0;
+        int playerChoice;
 
         do {
             System.out.println("====> GAME STILL PLAYING <====");
@@ -490,7 +493,7 @@ public class Menu implements FileName {
             playerChoice = Integer.parseInt(sc.nextLine());
             switch (playerChoice) {
                 case 1:
-                    int choice = -1;
+                    int choice;
                     listGame.removeAllGame();
                     listGame2.removeAllGame();
                     listGame3.removeAllGame();

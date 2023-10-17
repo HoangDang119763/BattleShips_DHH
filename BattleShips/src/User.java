@@ -3,7 +3,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Scanner;
 
-public class User extends ShopItem implements Serializable {
+public class User implements Serializable {
     private String nameID;//Tài khoản
     private String passWord;//Mật khẩu
     private String namePlayer;//Tên người dùng
@@ -12,8 +12,8 @@ public class User extends ShopItem implements Serializable {
     private double gold;
     private double diamond;
 
-    //Liên quan đến việc dùng tiền tệ
 
+    //Liên quan đến việc dùng tiền tệ
 
     //Định dạng lại đơn tị tiền tệ
     NumberFormat numf = NumberFormat.getCurrencyInstance(new Locale("en", "US"));
@@ -123,11 +123,11 @@ public class User extends ShopItem implements Serializable {
     }
     public void printInformationUser() {
         System.out.println("====> INFORMATION <====");
-        System.out.println("Biệt danh: " + this.getNameID());
+        System.out.println("Biệt danh: " + this.getNamePlayer());
         System.out.println("TK: " + this.getNameID());
         System.out.println("MK: ********");
         System.out.println("Gold: " + Gold());
         System.out.println("Diamond: " + Diamond());
-        System.out.println("Giới hạn lưu GAME hiện tại: " + getSaveGameLimited());
+        //System.out.println("Giới hạn lưu GAME hiện tại: " + getSaveGameLimited());
     }
 }

@@ -20,10 +20,12 @@ public class ListUser {
         this.listUser.remove(userName);
     }
 
-    public boolean checkNull() {
+    //Kiểm tra rỗng
+    /*public boolean checkNull() {
         return this.listUser.isEmpty();
-    }
+    }*/
 
+    //Số user
     public int numUser() {
         return this.listUser.size();
     }
@@ -34,9 +36,9 @@ public class ListUser {
     }
 
     //Xóa theo số thứ tự
-    public void removeSTT(int STT) {
+    /*public void removeSTT(int STT) {
         this.listUser.remove(STT - 1);
-    }
+    }*/
 
     //Xóa theo nameID
     public void removeNameID(String nameID) {
@@ -62,6 +64,7 @@ public class ListUser {
                     }
                 }
             } catch (EOFException e) {
+                //
             }
             objectIn.close();
             fileIn.close();
@@ -113,7 +116,8 @@ public class ListUser {
         return flag;
     }
 
-    public boolean checkpassWordUserFromFile(String passWord) {
+    //Kiểm tra mật khẩu
+    /*public boolean checkpassWordUserFromFile(String passWord) {
         boolean flag = false;
         for (User user : listUser) {
             if (user.checkPassWord(passWord)) {
@@ -122,7 +126,7 @@ public class ListUser {
             }
         }
         return flag;
-    }
+    }*/
 
     //Lấy namePlayer từ ListFile
     public String getNamePlayerFromList(String nameID) {
@@ -135,7 +139,8 @@ public class ListUser {
         return temp;
     }
 
-    public double getGoldPlayerFromList(String nameID) {
+    //Trả về số gold của player có TK:..
+    /*public double getGoldPlayerFromListByNameID(String nameID) {
         double temp = 0;
         for (User user : listUser) {
             if (user.checkNameID(nameID)) {
@@ -143,7 +148,18 @@ public class ListUser {
             }
         }
         return temp;
-    }
+    }*/
+
+    //Trả về số diamond của player có TK:..
+    /*public double getDiamondPlayerFromListByNameID(String nameID) {
+        double temp = 0;
+        for (User user : listUser) {
+            if (user.checkNameID(nameID)) {
+                temp = user.getDiamond();
+            }
+        }
+        return temp;
+    }*/
 
     //In thông tin của User chỉ định
     public void printUserInformationByNameID(String nameID) {

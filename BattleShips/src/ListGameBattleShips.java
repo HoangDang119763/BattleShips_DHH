@@ -19,14 +19,14 @@ public class ListGameBattleShips {
     }
 
     //Xóa game ra khỏi danh sách
-//    public void removeGame(Map gridMap) {
-//        this.listGame.remove(gridMap);
-//    }
+    /*public void removeGame(Map gridMap) {
+        this.listGame.remove(gridMap);
+    }*/
 
     //Kiểm tra rỗng
-//    public boolean checkNull() {
-//        return this.listGame.isEmpty();
-//    }
+    /*public boolean checkNull() {
+        return this.listGame.isEmpty();
+    }*/
 
     //In ra số map game đã lưu
     public int numGame() {
@@ -57,6 +57,7 @@ public class ListGameBattleShips {
                     }
                 }
             } catch (EOFException e) {
+                //
             }
             objectIn.close();
             fileIn.close();
@@ -97,13 +98,7 @@ public class ListGameBattleShips {
     }
 
     public int getValueSaveNum(int STT, int stt) {
-        //int temp = -1;
         return listGame.get(STT - 1).getValueSaveNum(stt);
-//        for (Map map : listGame) {
-//            temp = map.getValueSaveNum(STT);
-//            break;
-//        }
-//        return temp;
     }
 
     public Map getGameSTT(int STT) {
