@@ -292,7 +292,6 @@ public class ListUser {
             //In
             System.out.println(user);
         }
-
     }
 
 }

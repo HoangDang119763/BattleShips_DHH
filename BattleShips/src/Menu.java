@@ -425,11 +425,29 @@ public class Menu implements FileName {
                 if (temp.equals("0")) break;
                 //Nếu nhập đúng câu trả lời
                 if (temp.equals(listUser.getSecretQuestionFromList(user.getNameID()))) {
-                    changePasswordID();
+                    do {
+                        System.out.println("Nhập mật khẩu mới");
+                        String temp2 = sc.nextLine();
+                        if (temp2.equals("0")) break;
+                        System.out.println("Nhập lại mật khẩu mới");
+                        String temp3 = sc.nextLine();
+
+                        //Nếu 2 cái mật khẩu vừa nhập khác nhau => bắt nhập lại
+                        if (!temp2.equals(temp3)) {
+                            System.out.println("Hai mật khẩu không trùng khớp");
+                            System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
+                        } else {
+                            listUser.setPasswordIDByNameIDToFile(user.getNameID(), temp3);
+                            listUser.updateListUserToFile(fileUser);
+                            System.out.println("Đổi mật khẩu thành công !!!");
+                            break;
+                        }
+                    } while (true);
+                    break;
+                } else {
+                    System.out.println("Câu trả lời cho câu hỏi bảo mật sai !!!");
                 }
-                break;
-            }
-            System.out.println("Tài khoản không tồn tại hoặc nhập sai\nMời bạn nhập lại ! (Bấm 0 để thoát)");
+            } else System.out.println("Tài khoản không tồn tại hoặc nhập sai\nMời bạn nhập lại ! (Bấm 0 để thoát)");
         } while (true);
         listUser.removeAllUser();
         user = new User();
