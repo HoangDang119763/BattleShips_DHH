@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class User implements Serializable {
     private String nameID;//Tài khoản
-    private String passWord;//Mật khẩu
+    private String passwordID;//Mật khẩu
     private String namePlayer;//Tên người dùng
 
     //Phần tiền tệ
@@ -21,9 +21,9 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String nameID, String passWord, String namePlayer, double gold, double diamond) {
+    public User(String nameID, String passwordID, String namePlayer, double gold, double diamond) {
         this.nameID = nameID;
-        this.passWord = passWord;
+        this.passwordID = passwordID;
         this.namePlayer = namePlayer;
         this.gold = gold;
         this.diamond = diamond;
@@ -37,12 +37,12 @@ public class User implements Serializable {
         this.nameID = nameID;
     }
 
-    public String getPassWord() {
-        return passWord;
+    public String getPasswordID() {
+        return passwordID;
     }
 
-    public void setPassWord(String passWord) {
-        this.passWord = passWord;
+    public void setPasswordID(String passwordID) {
+        this.passwordID = passwordID;
     }
 
     public String getNamePlayer() {
@@ -75,7 +75,14 @@ public class User implements Serializable {
         System.out.print("Tài khoản: ");
         setNameID(sc.nextLine().toLowerCase());
         System.out.print("Mật khẩu: ");
-        setPassWord(sc.nextLine());
+        setPasswordID(sc.nextLine());
+    }
+
+    //Nhâp mật khẩu
+    public void inputPassword() {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Mật khẩu: ");
+        setPasswordID(sc.nextLine());
     }
 
     //Tạo tài khoản
@@ -84,7 +91,7 @@ public class User implements Serializable {
         System.out.print("Tài khoản: ");
         setNameID(sc.nextLine().toLowerCase());
         System.out.print("Mật khẩu: ");
-        setPassWord(sc.nextLine());
+        setPasswordID(sc.nextLine());
         System.out.print("Tên đại diện: ");
         setNamePlayer(sc.nextLine());
 
@@ -99,15 +106,15 @@ public class User implements Serializable {
     }
 
     //Kiểm tra mật khẩu
-    public boolean checkPassWord(String passWord) {
-        return passWord.equals(getPassWord());
+    public boolean checkPasswordID(String passWord) {
+        return passWord.equals(getPasswordID());
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "nameID='" + nameID + '\'' +
-                ", passWord='" + passWord + '\'' +
+                ", passWord='" + passwordID + '\'' +
                 ", namePlayer='" + namePlayer + '\'' +
                 ", gold=" + gold +
                 ", diamond=" + diamond +
@@ -128,6 +135,11 @@ public class User implements Serializable {
         System.out.println("MK: ********");
         System.out.println("Gold: " + Gold());
         System.out.println("Diamond: " + Diamond());
+        System.out.println("====> **** <====");
+        System.out.println("1.Đổi mật khẩu");
+        System.out.println("2.Đặt câu hỏi bảo mật");
+        System.out.println("3.Bạn bè");
+        System.out.println("0.Thoát");
         //System.out.println("Giới hạn lưu GAME hiện tại: " + getSaveGameLimited());
     }
 }

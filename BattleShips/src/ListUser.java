@@ -96,7 +96,7 @@ public class ListUser {
     public boolean checkInputUserFromFile(String nameID, String passWord) {
         boolean flag = false;
         for (User user : listUser) {
-            if (user.checkNameID(nameID) && user.checkPassWord(passWord)) {
+            if (user.checkNameID(nameID) && user.checkPasswordID(passWord)) {
                 flag = true;
                 break;
             }
@@ -117,18 +117,24 @@ public class ListUser {
     }
 
     //Kiểm tra mật khẩu
-    /*public boolean checkpassWordUserFromFile(String passWord) {
+    public boolean checkPasswordUserByNameIDFromFile(String nameID, String passwordID) {
         boolean flag = false;
         for (User user : listUser) {
-            if (user.checkPassWord(passWord)) {
+            if (user.checkPasswordID(passwordID)) {
                 flag = true;
                 break;
             }
         }
         return flag;
-    }*/
+    }
 
-    //Lấy namePlayer từ ListFile
+    public void setPasswordIDByNameIDToFile(String nameID, String passwordID) {
+        for (User user : listUser) {
+            if (user.getNameID().equals(nameID)) user.setPasswordID(passwordID);
+        }
+    }
+
+    //Lấy namePlayer từ ListUser
     public String getNamePlayerFromList(String nameID) {
         String temp = "";
         for (User user : listUser) {

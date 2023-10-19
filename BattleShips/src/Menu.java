@@ -157,25 +157,75 @@ public class Menu implements FileName {
                     break;
                 case 1:
                     user.printInformationUser();
+                    int choice1;
+                    do {
+                        user.printInformationUser();
+                        choice1 = Integer.parseInt(sc.nextLine());
+                        switch (choice1) {
+                            case 0:
+                                break;
+                            case 1:
+                                //changePassword();
+                                while (true) {
+                                    System.out.println("====> CHANGE PASSWORD <====");
+                                    System.out.println("Nhập mật khẩu hiện tại");
+                                    String temp1 = sc.nextLine();
+                                    if (temp1.equals("0")) break;
+                                    //Nếu kiểm tra trong file mật khẩu đúng thì cho nhập tiếp mật khẩu mới
+                                    //Nếu flag = true có nghĩa là mật khẩu đúng
+                                    if (listUser.checkPasswordUserByNameIDFromFile(user.getNameID(), temp1)) {
+                                        do {
+                                            System.out.println("Nhập mật khẩu mới");
+                                            String temp2 = sc.nextLine();
+                                            if (temp2.equals("0")) break;
+                                            System.out.println("Nhập lại mật khẩu mới");
+                                            String temp3 = sc.nextLine();
+
+                                            //Nếu 2 cái mật khẩu vừa nhập khác nhau => bắt nhập lại
+                                            if (!temp2.equals(temp3)) {
+                                                System.out.println("Hai mật khẩu không trùng khớp");
+                                                System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
+                                            } else {
+                                                listUser.setPasswordIDByNameIDToFile(user.getNameID(), temp3);
+                                                listUser.updateListUserToFile(fileUser);
+                                                System.out.println("Đổi mật khẩu thành công !!!");
+                                                break;
+                                            }
+                                        } while (true);
+                                        break;
+                                    } else {
+                                        System.out.println("Mật khẩu hiện tại sai!");
+                                        System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
+                                    }
+                                }
+                                break;
+                            case 2:
+                                break;
+                        }
+                    } while (choice1 != 0);
                     break;
                 case 2:
                     System.out.println("Mời bạn chon độ khó: ");
-                    System.out.println("1.Dễ\t2.Trung bình");
+                    System.out.println("1.Dễ\t2.Trung bình\t0.Thoát");
                     int choice;
                     do {
                         choice = Integer.parseInt(sc.nextLine());
                         switch (choice) {
-                            case 1 -> {
+                            case 0:
+                                break;
+                            case 1:
                                 bs.setLevelGame(1);
                                 startBattleShips_TypeOne();//Done!
-                            }
-                            case 2 -> {
+                                break;
+                            case 2:
                                 bs.setLevelGame(2);
                                 startBattleShips_TypeOne();//Done!
-                            }
-                            default -> notificationMess();//Done!
+                                break;
+                            default:
+                                notificationMess();//Done!
+                                break;
                         }
-                    } while (choice != 1 && choice != 2);
+                    } while (choice != 0);
                     break;
                 case 3:
                     playerChoiceForBattleShips_Still();
@@ -255,7 +305,7 @@ public class Menu implements FileName {
         int playerChoice;
         do {
             System.out.println("====> CLIENT <====");
-            System.out.println("1.Đăng nhập\n2.Đăng kí\n0.Thoát");
+            System.out.println("1.Đăng nhập\n2.Đăng kí\n3.Quên MK\n0.Thoát");
 
             playerChoice = Integer.parseInt(sc.nextLine());
             switch (playerChoice) {
@@ -277,7 +327,7 @@ public class Menu implements FileName {
                             listUser.updateListUserFromFile(fileUser);
                         //Nếu kiểm tra trong file có tài khoàn này thì đăng nhập thành công
                         //Nếu flag = true có nghĩa là tải khoàn và mật khẩu đều đúng
-                        if (listUser.checkInputUserFromFile(user.getNameID(), user.getPassWord())) break;
+                        if (listUser.checkInputUserFromFile(user.getNameID(), user.getPasswordID())) break;
                         else {
                             notificationUser();
                             count++;
@@ -296,6 +346,9 @@ public class Menu implements FileName {
                 case 2:
                     //Đăng kí
                     register();//Done!
+                    break;
+                case 3:
+
                     break;
                 case 110604://Chức năng admin
                     Console admin = new Console();
@@ -341,6 +394,9 @@ public class Menu implements FileName {
         user = new User();
     }
 
+    public void changePassword() {
+
+    }
     public void printListGame() {
         listGame.removeAllGame();
         if (fileExist(user.getNameID() + ".txt")) {
