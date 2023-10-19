@@ -165,41 +165,21 @@ public class Menu implements FileName {
                             case 0:
                                 break;
                             case 1:
-                                //changePassword();
-                                while (true) {
-                                    System.out.println("====> CHANGE PASSWORD <====");
-                                    System.out.println("Nhập mật khẩu hiện tại");
-                                    String temp1 = sc.nextLine();
-                                    if (temp1.equals("0")) break;
-                                    //Nếu kiểm tra trong file mật khẩu đúng thì cho nhập tiếp mật khẩu mới
-                                    //Nếu flag = true có nghĩa là mật khẩu đúng
-                                    if (listUser.checkPasswordUserByNameIDFromFile(user.getNameID(), temp1)) {
-                                        do {
-                                            System.out.println("Nhập mật khẩu mới");
-                                            String temp2 = sc.nextLine();
-                                            if (temp2.equals("0")) break;
-                                            System.out.println("Nhập lại mật khẩu mới");
-                                            String temp3 = sc.nextLine();
-
-                                            //Nếu 2 cái mật khẩu vừa nhập khác nhau => bắt nhập lại
-                                            if (!temp2.equals(temp3)) {
-                                                System.out.println("Hai mật khẩu không trùng khớp");
-                                                System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
-                                            } else {
-                                                listUser.setPasswordIDByNameIDToFile(user.getNameID(), temp3);
-                                                listUser.updateListUserToFile(fileUser);
-                                                System.out.println("Đổi mật khẩu thành công !!!");
-                                                break;
-                                            }
-                                        } while (true);
-                                        break;
-                                    } else {
-                                        System.out.println("Mật khẩu hiện tại sai!");
-                                        System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
-                                    }
-                                }
+                                changePasswordID();
                                 break;
                             case 2:
+                                if (!listUser.getSecretQuestionFromList(user.getNameID()).equals("null"))
+                                {
+                                    System.out.println("Đã cài câu hỏi bảo mật!");
+                                } else {
+                                    System.out.println("====> Secret QUESTION <====");
+                                    System.out.println(questionOne + " (Bấm 0 để thoát)");
+                                    String temp = sc.nextLine();
+                                    if (temp.equals("0")) break;
+                                    listUser.setSecretQuestionByNameIDToFile(user.getNameID(), temp);
+                                    listUser.updateListUserToFile(fileUser);
+                                    System.out.println("Đặt câu hỏi bảo mật thành công !!!");
+                                }
                                 break;
                         }
                     } while (choice1 != 0);
@@ -338,6 +318,8 @@ public class Menu implements FileName {
 
                     //Vô game
                     user.setNamePlayer(listUser.getNamePlayerFromList(user.getNameID()));
+                    user.setGold(listUser.getGoldPlayerFromListByNameID(user.getNameID()));
+                    user.setDiamond(listUser.getDiamondPlayerFromListByNameID(user.getNameID()));
                     playerChoice();
                     //Khởi tạo lại User mới để đăng nhập tiếp
                     listUser.removeAllUser();
@@ -348,7 +330,7 @@ public class Menu implements FileName {
                     register();//Done!
                     break;
                 case 3:
-
+                    forgetPasswordID();
                     break;
                 case 110604://Chức năng admin
                     Console admin = new Console();
@@ -394,9 +376,65 @@ public class Menu implements FileName {
         user = new User();
     }
 
-    public void changePassword() {
+    public void changePasswordID() {
+        while (true) {
+            System.out.println("====> CHANGE PASSWORD <====");
+            System.out.println("Nhập mật khẩu hiện tại");
+            String temp1 = sc.nextLine();
+            if (temp1.equals("0")) break;
+            //Nếu kiểm tra trong file mật khẩu đúng thì cho nhập tiếp mật khẩu mới
+            //Nếu flag = true có nghĩa là mật khẩu đúng
+            if (listUser.checkPasswordUserByNameIDFromFile(user.getNameID(), temp1)) {
+                do {
+                    System.out.println("Nhập mật khẩu mới");
+                    String temp2 = sc.nextLine();
+                    if (temp2.equals("0")) break;
+                    System.out.println("Nhập lại mật khẩu mới");
+                    String temp3 = sc.nextLine();
 
+                    //Nếu 2 cái mật khẩu vừa nhập khác nhau => bắt nhập lại
+                    if (!temp2.equals(temp3)) {
+                        System.out.println("Hai mật khẩu không trùng khớp");
+                        System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
+                    } else {
+                        listUser.setPasswordIDByNameIDToFile(user.getNameID(), temp3);
+                        listUser.updateListUserToFile(fileUser);
+                        System.out.println("Đổi mật khẩu thành công !!!");
+                        break;
+                    }
+                } while (true);
+                break;
+            } else {
+                System.out.println("Mật khẩu hiện tại sai!");
+                System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
+            }
+        }
     }
+
+    public void forgetPasswordID() {
+        listUser.removeAllUser();
+        if (fileExist(fileUser)) listUser.updateListUserFromFile(fileUser);
+        do {
+            System.out.println("====> FORGET PASSWORD <====");
+            user.inputNameID();
+            if (user.getNameID().equals("0")) break;
+            //Nếu tài khoản đúng thì
+            if (listUser.checknameIDUserFromFile(user.getNameID())) {
+                System.out.println(questionOne + " (Bấm 0 để thoát)");
+                String temp = sc.nextLine();
+                if (temp.equals("0")) break;
+                //Nếu nhập đúng câu trả lời
+                if (temp.equals(listUser.getSecretQuestionFromList(user.getNameID()))) {
+                    changePasswordID();
+                }
+                break;
+            }
+            System.out.println("Tài khoản không tồn tại hoặc nhập sai\nMời bạn nhập lại ! (Bấm 0 để thoát)");
+        } while (true);
+        listUser.removeAllUser();
+        user = new User();
+    }
+
     public void printListGame() {
         listGame.removeAllGame();
         if (fileExist(user.getNameID() + ".txt")) {

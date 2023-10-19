@@ -128,9 +128,27 @@ public class ListUser {
         return flag;
     }
 
+    //Kiểm tra câu hỏi bảo mật
+    public boolean checkSecretQuestionUserByNameIdFromFile(String nameID, String secretQuestion) {
+        boolean flag = false;
+        for (User user : listUser) {
+            if (user.checkSecretQuetion(secretQuestion)) {
+                flag = true;
+                break;
+            }
+        }
+        return flag;
+    }
+
     public void setPasswordIDByNameIDToFile(String nameID, String passwordID) {
         for (User user : listUser) {
             if (user.getNameID().equals(nameID)) user.setPasswordID(passwordID);
+        }
+    }
+
+    public void setSecretQuestionByNameIDToFile(String nameID, String secretQuestion) {
+        for (User user : listUser) {
+            if (user.getNameID().equals(nameID)) user.setSecretQuestion(secretQuestion);
         }
     }
 
@@ -145,8 +163,18 @@ public class ListUser {
         return temp;
     }
 
+    public String getSecretQuestionFromList(String nameID) {
+        String temp = "";
+        for (User user : listUser) {
+            if (user.checkNameID(nameID)) {
+                temp = user.getSecretQuestion();
+            }
+        }
+        return temp;
+    }
+
     //Trả về số gold của player có TK:..
-    /*public double getGoldPlayerFromListByNameID(String nameID) {
+    public double getGoldPlayerFromListByNameID(String nameID) {
         double temp = 0;
         for (User user : listUser) {
             if (user.checkNameID(nameID)) {
@@ -154,10 +182,10 @@ public class ListUser {
             }
         }
         return temp;
-    }*/
+    }
 
     //Trả về số diamond của player có TK:..
-    /*public double getDiamondPlayerFromListByNameID(String nameID) {
+    public double getDiamondPlayerFromListByNameID(String nameID) {
         double temp = 0;
         for (User user : listUser) {
             if (user.checkNameID(nameID)) {
@@ -165,7 +193,7 @@ public class ListUser {
             }
         }
         return temp;
-    }*/
+    }
 
     //In thông tin của User chỉ định
     public void printUserInformationByNameID(String nameID) {

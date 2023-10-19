@@ -7,6 +7,7 @@ public class User implements Serializable {
     private String nameID;//Tài khoản
     private String passwordID;//Mật khẩu
     private String namePlayer;//Tên người dùng
+    private String secretQuestion = "null";
 
     //Phần tiền tệ
     private double gold;
@@ -69,6 +70,14 @@ public class User implements Serializable {
         this.diamond = diamond;
     }
 
+    public String getSecretQuestion() {
+        return secretQuestion;
+    }
+
+    public void setSecretQuestion(String secretQuestion) {
+        this.secretQuestion = secretQuestion;
+    }
+
     //Đăng nhập: Chỉ nhập TK + MK
     public void inputData() {
         Scanner sc = new Scanner(System.in);
@@ -76,6 +85,13 @@ public class User implements Serializable {
         setNameID(sc.nextLine().toLowerCase());
         System.out.print("Mật khẩu: ");
         setPasswordID(sc.nextLine());
+    }
+
+    //Nhập tài khoản
+    public void inputNameID() {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Tài khoản: ");
+        setNameID(sc.nextLine().toLowerCase());
     }
 
     //Nhâp mật khẩu
@@ -106,8 +122,13 @@ public class User implements Serializable {
     }
 
     //Kiểm tra mật khẩu
-    public boolean checkPasswordID(String passWord) {
-        return passWord.equals(getPasswordID());
+    public boolean checkPasswordID(String passwordID) {
+        return passwordID.equals(getPasswordID());
+    }
+
+    //Kiểm tra câu hỏi bảo mật
+    public boolean checkSecretQuetion(String secretQuestion) {
+        return secretQuestion.equals(getPasswordID());
     }
 
     @Override
