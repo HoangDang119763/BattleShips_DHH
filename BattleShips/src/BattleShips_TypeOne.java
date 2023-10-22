@@ -52,17 +52,13 @@ public class BattleShips_TypeOne extends BattleShips {
         int x = -1, y = -1;
         do {
             Scanner sc = new Scanner(System.in);
+            System.out.println("(Bấm -1 để lưu)");
             System.out.print("Nhập tọa độ X: ");
             x = Integer.parseInt(sc.nextLine());
             //Nếu x == -1 => Save
             if (x == -1) {
-                gridMap.setValueSaveNum(0, getPlayerShips());
-                gridMap.setValueSaveNum(1, getComputerShips());
-                gridMap.setValueSaveNum(2, getLevelGame());
-                gridMap.setValueSaveNum(3, getNumRows());
-                gridMap.setValueSaveNum(4, getNumColums());
-                setPlayerShips(-1);
-                setComputerShips(0);
+                saveInformationBattle();
+                setStatus(false);
                 break;
             }
             System.out.print("Nhập tọa độ Y: ");
@@ -123,8 +119,6 @@ public class BattleShips_TypeOne extends BattleShips {
             } else if (!checkGrid(x, y)) //Tọa độ đoán không hợp lệ
                 System.out.println("Bạn không thể đặt ngoài kích thước map đã quy định: " + getNumRows() + " và " + getNumColums());
         } while (!checkGrid(x, y));
-        //Vì có khả năng người chơi tiêu diệt hết thuyền của Computer và ngay sau đó Computer cũng tiêu diệt được player dẫn đến
-        //việc sai sót
         //Test
         gridPlayer.printOceanMap();
     }
