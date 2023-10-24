@@ -1,7 +1,7 @@
 import java.io.File;
 import java.util.Scanner;
 
-public abstract class BattleShips {
+public abstract class BattleShips implements FileName {
     Scanner sc = new Scanner(System.in);
     private int numRows;
     private int numColums;
@@ -162,7 +162,7 @@ public abstract class BattleShips {
         gridMap.printOceanMap();
     }
 
-    public void startBattle(String nameID, ListGameBattleShips list1, ListGameBattleShips list2, ListGameBattleShips list3, ListGameBattleShips list4) {
+    public void startBattle(User user, ListGameBattleShips list1, ListGameBattleShips list2, ListGameBattleShips list3, ListGameBattleShips list4, ListUser listUser) {
         setStatus(true);
         inputData();
         //B1: Tạo map
@@ -176,9 +176,9 @@ public abstract class BattleShips {
             //bs.Battle();
             playerTurn();
             if (status == false) {
-                list2.addGameByNameIDToFile(nameID, "gridplayer.txt", gridPlayer);
-                list3.addGameByNameIDToFile(nameID, "gridcomputer.txt", gridComputer);
-                list4.addGameByNameIDToFile(nameID, "gridmap.txt", gridMap);
+                list2.addGameByNameIDToFile(user.getNameID(), "gridplayer.txt", gridPlayer);
+                list3.addGameByNameIDToFile(user.getNameID(), "gridcomputer.txt", gridComputer);
+                list4.addGameByNameIDToFile(user.getNameID(), "gridmap.txt", gridMap);
                 break;
             }
             //Tránh trường hợp người chơi tiêu diệt hết sau đó máy cũng tiêu diệt hết player dẫn đến sai
@@ -192,20 +192,64 @@ public abstract class BattleShips {
         //B5: Kết thúc
         if (status == true) {
             gameOver();
-            list1.askForSaveGameDone(nameID, gridPlayer);
+            if (getComputerShips() == 0) {
+                user.setGold(user.getGold() + 150);
+                listUser.setNumGameWinByNameIDToFile(FileName.fileUser, user.getNameID(), user.getNumGameWin() + 1);
+            }
+            list1.askForSaveGameDone(user, gridPlayer);
         }
     }
 
-    public void startBattleStill(String nameID, ListGameBattleShips list1, ListGameBattleShips list2, ListGameBattleShips list3, ListGameBattleShips list4) {
+    public void startBattle(User user, ListGameBattleShips list1, ListGameBattleShips list2, ListGameBattleShips list3, ListGameBattleShips list4, ListUser listUser, ListItemShop listItemShop) {
+        setStatus(true);
+        inputData();
+        //B1: Tạo map
+        createOceanMap();
+        //B2. Player đặt thuyền
+        deployPlayerShips();
+        //B3: Computer đặt thuyền
+        deployComputerShips();
+        //B4: Chiến
+        do {
+            //bs.Battle();
+            playerTurn();
+            if (status == false) {
+                list2.addGameByNameIDToFile(user.getNameID(), "gridplayer.txt", gridPlayer);
+                list3.addGameByNameIDToFile(user.getNameID(), "gridcomputer.txt", gridComputer);
+                list4.addGameByNameIDToFile(user.getNameID(), "gridmap.txt", gridMap);
+                break;
+            }
+            //Tránh trường hợp người chơi tiêu diệt hết sau đó máy cũng tiêu diệt hết player dẫn đến sai
+            if (getComputerShips() > 0) {
+                computerTurn();
+                System.out.println();
+                System.out.println("Số thuyền của bạn: " + getPlayerShips() + " | Số thuyền của Computer: " + getComputerShips());
+                System.out.println();
+            }
+        } while (getPlayerShips() != 0 && getComputerShips() != 0 && status == true);
+        //B5: Kết thúc
+        if (status == true) {
+            gameOver();
+            if (getComputerShips() == 0) {
+                user.setGold(user.getGold() + 150);
+                listUser.setUserGoldByNameIDToFile(fileUser, user.getNameID(), user.getGold());
+                listUser.setNumGameWinByNameIDToFile(FileName.fileUser, user.getNameID(), user.getNumGameWin() + 1);
+            }
+            listUser.updateInformationUserFromList(user);
+            list1.askForSaveGameDone(user, gridPlayer, listItemShop);
+        }
+    }
+
+    public void startBattleStill(User user, ListGameBattleShips list1, ListGameBattleShips list2, ListGameBattleShips list3, ListGameBattleShips list4, ListUser listUser) {
         boolean status = true;
         int stt;
         //Nếu list gridplayer rỗng thì
         if (list2.checkNull()) {
             //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
-            if (fileExist(nameID + "gridplayer.txt")) {
-                list2.updateListGameFromFile(nameID + "gridplayer.txt");
-                list3.updateListGameFromFile(nameID + "gridcomputer.txt");
-                list4.updateListGameFromFile(nameID + "gridmap.txt");
+            if (fileExist(user.getNameID() + "gridplayer.txt")) {
+                list2.updateListGameFromFile(user.getNameID() + "gridplayer.txt");
+                list3.updateListGameFromFile(user.getNameID() + "gridcomputer.txt");
+                list4.updateListGameFromFile(user.getNameID() + "gridmap.txt");
 
                 //Nếu cập nhật rồi mà ArrayList vẫn rỗng thì => chưa lưu game nào
                 if (list2.checkNull()) System.out.println("Bạn chưa lưu game nào!");
@@ -230,9 +274,9 @@ public abstract class BattleShips {
                             setNumRows(list2.getValueSaveNumFromListSTTstt(stt, 3));
                             setNumColums(list2.getValueSaveNumFromListSTTstt(stt, 4));
 
-                            list2.removeGameByNameIDSTTToFile(nameID, "gridplayer.txt", stt);
-                            list3.removeGameByNameIDSTTToFile(nameID, "gridcomputer.txt", stt);
-                            list4.removeGameByNameIDSTTToFile(nameID, "gridmap.txt", stt);
+                            list2.removeGameByNameIDSTTToFile(user.getNameID(), "gridplayer.txt", stt);
+                            list3.removeGameByNameIDSTTToFile(user.getNameID(), "gridcomputer.txt", stt);
+                            list4.removeGameByNameIDSTTToFile(user.getNameID(), "gridmap.txt", stt);
 
                             gridPlayer.printOceanMap();
 
@@ -240,9 +284,9 @@ public abstract class BattleShips {
                                 //bs.Battle();
                                 playerTurn();
                                 if (status == false) {
-                                    list2.addGameByNameIDToFile(nameID, "gridplayer.txt", gridPlayer);
-                                    list3.addGameByNameIDToFile(nameID, "gridcomputer.txt", gridComputer);
-                                    list4.addGameByNameIDToFile(nameID, "gridmap.txt", gridMap);
+                                    list2.addGameByNameIDToFile(user.getNameID(), "gridplayer.txt", gridPlayer);
+                                    list3.addGameByNameIDToFile(user.getNameID(), "gridcomputer.txt", gridComputer);
+                                    list4.addGameByNameIDToFile(user.getNameID(), "gridmap.txt", gridMap);
                                     break;
                                 }
                                 //Tránh trường hợp người chơi tiêu diệt hết sau đó máy cũng tiêu diệt hết player dẫn đến sai
@@ -256,7 +300,11 @@ public abstract class BattleShips {
                             //B5: Kết thúc
                             if (status == true) {
                                 gameOver();
-                                list1.askForSaveGameDone(nameID, gridPlayer);
+                                if (getComputerShips() == 0) {
+                                    user.setGold(user.getGold() + 150);
+                                    listUser.setNumGameWinByNameIDToFile(FileName.fileUser, user.getNameID(), user.getNumGameWin() + 1);
+                                }
+                                list1.askForSaveGameDone(user, gridPlayer);
                                 break;
                             }
                         } else {
@@ -266,7 +314,7 @@ public abstract class BattleShips {
                     } while (true);
                 }
             } else System.out.println("Bạn chưa lưu game nào!"); //File k tồn tại thì chắc chắn chưa lưu game nào
-        } else if (!list2.checkNull() && fileExist(nameID + "gridplayer.txt")) { //trường hợp là đã gọi hàm in danh sách trước
+        } else if (!list2.checkNull() && fileExist(user.getNameID() + "gridplayer.txt")) { //trường hợp là đã gọi hàm in danh sách trước
             do {
                 //Tức là có dữ liệu
                 System.out.println("Mời bạn nhập STT của Game muốn chơi tiếp! (Bấm 0 để thoát!))");
@@ -287,9 +335,9 @@ public abstract class BattleShips {
                     setNumRows(list2.getValueSaveNumFromListSTTstt(stt, 3));
                     setNumColums(list2.getValueSaveNumFromListSTTstt(stt, 4));
 
-                    list2.removeGameByNameIDSTTToFile(nameID, "gridplayer.txt", stt);
-                    list3.removeGameByNameIDSTTToFile(nameID, "gridcomputer.txt", stt);
-                    list4.removeGameByNameIDSTTToFile(nameID, "gridmap.txt", stt);
+                    list2.removeGameByNameIDSTTToFile(user.getNameID(), "gridplayer.txt", stt);
+                    list3.removeGameByNameIDSTTToFile(user.getNameID(), "gridcomputer.txt", stt);
+                    list4.removeGameByNameIDSTTToFile(user.getNameID(), "gridmap.txt", stt);
 
                     gridPlayer.printOceanMap();
 
@@ -297,9 +345,9 @@ public abstract class BattleShips {
                         //bs.Battle();
                         playerTurn();
                         if (status == false) {
-                            list2.addGameByNameIDToFile(nameID, "gridplayer.txt", gridPlayer);
-                            list3.addGameByNameIDToFile(nameID, "gridcomputer.txt", gridComputer);
-                            list4.addGameByNameIDToFile(nameID, "gridmap.txt", gridMap);
+                            list2.addGameByNameIDToFile(user.getNameID(), "gridplayer.txt", gridPlayer);
+                            list3.addGameByNameIDToFile(user.getNameID(), "gridcomputer.txt", gridComputer);
+                            list4.addGameByNameIDToFile(user.getNameID(), "gridmap.txt", gridMap);
                             break;
                         }
                         //Tránh trường hợp người chơi tiêu diệt hết sau đó máy cũng tiêu diệt hết player dẫn đến sai
@@ -313,7 +361,151 @@ public abstract class BattleShips {
                     //B5: Kết thúc
                     if (status == true) {
                         gameOver();
-                        list1.askForSaveGameDone(nameID, gridPlayer);
+                        if (getComputerShips() == 0) {
+                            user.setGold(user.getGold() + 150);
+                            listUser.setNumGameWinByNameIDToFile(FileName.fileUser, user.getNameID(), user.getNumGameWin() + 1);
+                        }
+                        list1.askForSaveGameDone(user, gridPlayer);
+                        break;
+                    }
+                } else {
+                    System.out.println("Số thứ tự không hợp lệ!");
+                    System.out.println("Mời bạn nhập lại");
+                }
+            } while (true);
+        }
+    }
+
+    public void startBattleStill(User user, ListGameBattleShips list1, ListGameBattleShips list2, ListGameBattleShips list3, ListGameBattleShips list4, ListUser listUser, ListItemShop listItemShop) {
+        boolean status = true;
+        int stt;
+        //Nếu list gridplayer rỗng thì
+        if (list2.checkNull()) {
+            //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
+            if (fileExist(user.getNameID() + "gridplayer.txt")) {
+                list2.updateListGameFromFile(user.getNameID() + "gridplayer.txt");
+                list3.updateListGameFromFile(user.getNameID() + "gridcomputer.txt");
+                list4.updateListGameFromFile(user.getNameID() + "gridmap.txt");
+
+                //Nếu cập nhật rồi mà ArrayList vẫn rỗng thì => chưa lưu game nào
+                if (list2.checkNull()) System.out.println("Bạn chưa lưu game nào!");
+                else {
+                    do {
+                        //Tức là có dữ liệu
+                        System.out.println("Mời bạn nhập STT của Game muốn chơi tiếp! (Bấm 0 để thoát!))");
+                        stt = Integer.parseInt(sc.nextLine());
+                        if (stt == 0) break;
+                        else if (stt >= 1 && stt <= list2.numGame()) {
+                            gridPlayer = new Map(list2.getValueSaveNumFromListSTTstt(stt, 3), list2.getValueSaveNumFromListSTTstt(stt, 4));
+                            gridComputer = new Map(list2.getValueSaveNumFromListSTTstt(stt, 3), list2.getValueSaveNumFromListSTTstt(stt, 4));
+                            gridMap = new Map(list2.getValueSaveNumFromListSTTstt(stt, 3), list2.getValueSaveNumFromListSTTstt(stt, 4));
+
+                            gridPlayer = list2.getGameSTTFromList(stt);
+                            gridComputer = list3.getGameSTTFromList(stt);
+                            gridMap = list4.getGameSTTFromList(stt);
+
+                            setComputerShips(list2.getValueSaveNumFromListSTTstt(stt, 0));
+                            setPlayerShips(list2.getValueSaveNumFromListSTTstt(stt, 1));
+                            setLevelGame(list2.getValueSaveNumFromListSTTstt(stt, 2));
+                            setNumRows(list2.getValueSaveNumFromListSTTstt(stt, 3));
+                            setNumColums(list2.getValueSaveNumFromListSTTstt(stt, 4));
+
+                            list2.removeGameByNameIDSTTToFile(user.getNameID(), "gridplayer.txt", stt);
+                            list3.removeGameByNameIDSTTToFile(user.getNameID(), "gridcomputer.txt", stt);
+                            list4.removeGameByNameIDSTTToFile(user.getNameID(), "gridmap.txt", stt);
+
+                            gridPlayer.printOceanMap();
+
+                            do {
+                                //bs.Battle();
+                                playerTurn();
+                                if (status == false) {
+                                    list2.addGameByNameIDToFile(user.getNameID(), "gridplayer.txt", gridPlayer);
+                                    list3.addGameByNameIDToFile(user.getNameID(), "gridcomputer.txt", gridComputer);
+                                    list4.addGameByNameIDToFile(user.getNameID(), "gridmap.txt", gridMap);
+                                    break;
+                                }
+                                //Tránh trường hợp người chơi tiêu diệt hết sau đó máy cũng tiêu diệt hết player dẫn đến sai
+                                if (getComputerShips() > 0) {
+                                    computerTurn();
+                                    System.out.println();
+                                    System.out.println("Số thuyền của bạn: " + getPlayerShips() + " | Số thuyền của Computer: " + getComputerShips());
+                                    System.out.println();
+                                }
+                            } while (getPlayerShips() != 0 && getComputerShips() != 0 && status == true);
+                            //B5: Kết thúc
+                            if (status == true) {
+                                gameOver();
+                                if (getComputerShips() == 0) {
+                                    user.setGold(user.getGold() + 150);
+                                    listUser.setUserGoldByNameIDToFile(fileUser, user.getNameID(), user.getGold());
+                                    listUser.setNumGameWinByNameIDToFile(FileName.fileUser, user.getNameID(), user.getNumGameWin() + 1);
+                                }
+                                list1.askForSaveGameDone(user, gridPlayer, listItemShop);
+                                listUser.updateInformationUserFromList(user);
+                                break;
+                            }
+                        } else {
+                            System.out.println("Số thứ tự không hợp lệ!");
+                            System.out.println("Mời bạn nhập lại");
+                        }
+                    } while (true);
+                }
+            } else System.out.println("Bạn chưa lưu game nào!"); //File k tồn tại thì chắc chắn chưa lưu game nào
+        } else if (!list2.checkNull() && fileExist(user.getNameID() + "gridplayer.txt")) { //trường hợp là đã gọi hàm in danh sách trước
+            do {
+                //Tức là có dữ liệu
+                System.out.println("Mời bạn nhập STT của Game muốn chơi tiếp! (Bấm 0 để thoát!))");
+                stt = Integer.parseInt(sc.nextLine());
+                if (stt == 0) break;
+                else if (stt >= 1 && stt <= list2.numGame()) {
+                    gridPlayer = new Map(list2.getValueSaveNumFromListSTTstt(stt, 3), list2.getValueSaveNumFromListSTTstt(stt, 4));
+                    gridComputer = new Map(list2.getValueSaveNumFromListSTTstt(stt, 3), list2.getValueSaveNumFromListSTTstt(stt, 4));
+                    gridMap = new Map(list2.getValueSaveNumFromListSTTstt(stt, 3), list2.getValueSaveNumFromListSTTstt(stt, 4));
+
+                    gridPlayer = list2.getGameSTTFromList(stt);
+                    gridComputer = list3.getGameSTTFromList(stt);
+                    gridMap = list4.getGameSTTFromList(stt);
+
+                    setComputerShips(list2.getValueSaveNumFromListSTTstt(stt, 0));
+                    setPlayerShips(list2.getValueSaveNumFromListSTTstt(stt, 1));
+                    setLevelGame(list2.getValueSaveNumFromListSTTstt(stt, 2));
+                    setNumRows(list2.getValueSaveNumFromListSTTstt(stt, 3));
+                    setNumColums(list2.getValueSaveNumFromListSTTstt(stt, 4));
+
+                    list2.removeGameByNameIDSTTToFile(user.getNameID(), "gridplayer.txt", stt);
+                    list3.removeGameByNameIDSTTToFile(user.getNameID(), "gridcomputer.txt", stt);
+                    list4.removeGameByNameIDSTTToFile(user.getNameID(), "gridmap.txt", stt);
+
+                    gridPlayer.printOceanMap();
+
+                    do {
+                        //bs.Battle();
+                        playerTurn();
+                        if (status == false) {
+                            list2.addGameByNameIDToFile(user.getNameID(), "gridplayer.txt", gridPlayer);
+                            list3.addGameByNameIDToFile(user.getNameID(), "gridcomputer.txt", gridComputer);
+                            list4.addGameByNameIDToFile(user.getNameID(), "gridmap.txt", gridMap);
+                            break;
+                        }
+                        //Tránh trường hợp người chơi tiêu diệt hết sau đó máy cũng tiêu diệt hết player dẫn đến sai
+                        if (getComputerShips() > 0) {
+                            computerTurn();
+                            System.out.println();
+                            System.out.println("Số thuyền của bạn: " + getPlayerShips() + " | Số thuyền của Computer: " + getComputerShips());
+                            System.out.println();
+                        }
+                    } while (getPlayerShips() != 0 && getComputerShips() != 0 && status == true);
+                    //B5: Kết thúc
+                    if (status == true) {
+                        gameOver();
+                        if (getComputerShips() == 0) {
+                            user.setGold(user.getGold() + 150);
+                            listUser.setUserGoldByNameIDToFile(fileUser, user.getNameID(), user.getGold());
+                            listUser.setNumGameWinByNameIDToFile(FileName.fileUser, user.getNameID(), user.getNumGameWin() + 1);
+                        }
+                        list1.askForSaveGameDone(user, gridPlayer, listItemShop);
+                        listUser.updateInformationUserFromList(user);
                         break;
                     }
                 } else {
@@ -332,7 +524,7 @@ public abstract class BattleShips {
         gridPlayer.setValueSaveNum(4, getNumColums());
     }
 
-    public void choiceLevelGameTypeOne() {
+    public void choiceLevelGameTypeOne(User user, ListGameBattleShips list1, ListGameBattleShips list2, ListGameBattleShips list3, ListGameBattleShips list4, ListUser listUser) {
         System.out.println("Mời bạn chon độ khó: ");
         System.out.println("1.Dễ\t2.Trung bình\t0.Thoát");
         int choice;
@@ -343,9 +535,40 @@ public abstract class BattleShips {
                     break;
                 case 1:
                     setLevelGame(1);
+                    startBattle(user, list1, list2, list3, list4, listUser);
                     break;
                 case 2:
                     setLevelGame(2);
+                    startBattle(user, list1, list2, list3, list4, listUser);
+                    break;
+                default:
+                    System.out.println("Lựa chọn không hợp lệ!");
+                    System.out.println("Mời bạn nhập lại");
+                    break;
+            }
+        } while (choice != 1 && choice != 2 && choice != 0);
+    }
+
+    public void choiceLevelGameTypeOne(User user, ListGameBattleShips list1, ListGameBattleShips list2, ListGameBattleShips list3, ListGameBattleShips list4, ListUser listUser, ListItemShop listItemShop) {
+        System.out.println("Mời bạn chon độ khó: ");
+        System.out.println("1.Dễ\t2.Trung bình\t0.Thoát");
+        int choice;
+        do {
+            choice = Integer.parseInt(sc.nextLine());
+            switch (choice) {
+                case 0:
+                    break;
+                case 1:
+                    setLevelGame(1);
+                    startBattle(user, list1, list2, list3, list4, listUser, listItemShop);
+                    listUser.setUserGoldByNameIDToFile(fileUser, user.getNameID(), user.getGold());
+                    listUser.updateInformationUserFromList(user);
+                    break;
+                case 2:
+                    setLevelGame(2);
+                    startBattle(user, list1, list2, list3, list4, listUser, listItemShop);
+                    listUser.setUserGoldByNameIDToFile(fileUser, user.getNameID(), user.getGold());
+                    listUser.updateInformationUserFromList(user);
                     break;
                 default:
                     System.out.println("Lựa chọn không hợp lệ!");

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class ListUser implements FileName {
@@ -47,7 +48,7 @@ public class ListUser implements FileName {
         this.listUser.remove(STT - 1);
     }
 
-    //Xóa theo nameID
+    //Xóa User theo nameID
     public void removeNameID(String nameID) {
         for (User user : listUser) {
             if (user.checkNameID(nameID)) {
@@ -55,6 +56,10 @@ public class ListUser implements FileName {
                 break;
             }
         }
+    }
+
+    public User getUserSTTFromList(int STT) {
+        return listUser.get(STT - 1);
     }
 
     //Cập nhật danh sách từ file
@@ -99,6 +104,7 @@ public class ListUser implements FileName {
         }
     }
 
+    //========================================================LIST======================================================
     //Kiểm tra tài khoản người dùng nhập có đúng không (nếu đã đăng kí) và chưa đăng kí
     public boolean checkInputUserFromList(String nameID, String passWord) {
         boolean flag = false;
@@ -172,13 +178,14 @@ public class ListUser implements FileName {
     public boolean checkDiamondPlayerByNameIDFromList(String nameID, double diamond) {
         boolean flag = false;
         for (User user : listUser) {
-            if (user.checkGold(diamond)) {
+            if (user.checkDiamond(diamond)) {
                 flag = true;
                 break;
             }
         }
         return flag;
     }
+
     //Lấy namePlayer từ ListUser
     public String getNamePlayerByNameIDFromList(String nameID) {
         String temp = "";
@@ -220,6 +227,17 @@ public class ListUser implements FileName {
         return temp;
     }
 
+//    public int getSavedGameLimitedByNameIDFromList(String nameID) {
+//        int temp = 0;
+//        for (User user : listUser) {
+//            if (user.checkNameID(nameID)) {
+//                temp = user.getSavedGameLimited();
+//            }
+//        }
+//        return temp;
+//    }
+
+
     //Trả về số gold của player có TK:..
     public double getGoldPlayerByNameIDFromList(String nameID) {
         double temp = 0;
@@ -242,6 +260,60 @@ public class ListUser implements FileName {
         return temp;
     }
 
+    //In danh sách User đã lưu ra màn hình
+    public void printAllUserFromList() {
+        int stt = 1;
+        for (User user : listUser) {
+            System.out.println("\nNgười dùng thứ " + stt + ":");
+            stt++;
+            System.out.println(user);
+        }
+    }
+
+    public void updateInformationUserFromList(User user) {
+        user.setNamePlayer(getNamePlayerByNameIDFromList(user.getNameID()));
+        user.setSecretQuestion(getSecretQuestionByNameIDFromList(user.getNameID()));
+        user.setNumGameWin(getNumGameWinByNameIDFromList(user.getNameID()));
+        user.setGold(getGoldPlayerByNameIDFromList(user.getNameID()));
+        user.setDiamond(getDiamondPlayerByNameIDFromList(user.getNameID()));
+        //user.setSavedGameLimited(getSavedGameLimitedByNameIDFromList(user.getNameID()) + listItemShop.getSavedGameLimitedByNameIDFromList(user.getNameID()));
+        //user.setNickName(listItemShop.getNickNameByNameIDFromList(user.getNameID()));
+    }
+
+    //====================================================SET LIST======================================================
+    public void setPasswordIDByNameIDToList(String nameID, String passwordID) {
+        for (User user : listUser) {
+            if (user.getNameID().equals(nameID)) user.setPasswordID(passwordID);
+        }
+    }
+
+    public void setSecretQuestionByNameIDToList(String nameID, String secretQuestion) {
+        for (User user : listUser) {
+            if (user.getNameID().equals(nameID)) user.setSecretQuestion(secretQuestion);
+        }
+    }
+
+    public void setNumGameWinByNameIDToList(String nameID, int numGameWin) {
+        for (User user : listUser) {
+            if (user.getNameID().equals(nameID)) user.setNumGameWin(numGameWin);
+        }
+    }
+
+    //    public void setNickNameByNameIDToList(String nameID, String nickName) {
+//        for (User user : listUser) {
+//            if (user.getNameID().equals(nameID)) user.setNickName(nickName);
+//        }
+//    }
+
+    public void setUserGoldByNameIDToList(String nameID, double numGold) {
+        for (User user : listUser) {
+            if (user.checkNameID(nameID)) {
+                user.setGold(numGold);
+                break;
+            }
+        }
+    }
+
     //Thêm và trừ GOLD của User
     public void addUserGoldByNameIDToList(String nameID, double numGold) {
         for (User user : listUser) {
@@ -261,7 +333,16 @@ public class ListUser implements FileName {
         }
     }
 
-    //Thêm và trừ GOLD của User
+    public void setUserDiamondByNameIDToList(String nameID, double numDiamond) {
+        for (User user : listUser) {
+            if (user.checkNameID(nameID)) {
+                user.setDiamond(numDiamond);
+                break;
+            }
+        }
+    }
+
+    //Thêm và trừ DIAMOND của User
     public void addUserDiamondByNameIDToList(String nameID, double numDiamond) {
         for (User user : listUser) {
             if (user.checkNameID(nameID)) {
@@ -280,13 +361,9 @@ public class ListUser implements FileName {
         }
     }
 
-    //Set vào list
-    public void setPasswordIDByNameIDToList(String nameID, String passwordID) {
-        for (User user : listUser) {
-            if (user.getNameID().equals(nameID)) user.setPasswordID(passwordID);
-        }
-    }
 
+
+    //====================================================SET FILE======================================================
     public void setPasswordIDByNameIDToFile(String fileName, String nameID, String passwordID) {
         if (checkNull()) {
             //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
@@ -298,16 +375,10 @@ public class ListUser implements FileName {
                 updateListUserToFile(fileName);
                 System.out.println("Đổi mật khẩu thành công !!!");
             }
-        } else if (!checkNull() && fileExist(fileName)){
+        } else if (!checkNull() && fileExist(fileName)) {
             setPasswordIDByNameIDToList(nameID, passwordID);
             updateListUserToFile(fileName);
             System.out.println("Đổi mật khẩu thành công !!!");
-        }
-    }
-
-    public void setSecretQuestionByNameIDToList(String nameID, String secretQuestion) {
-        for (User user : listUser) {
-            if (user.getNameID().equals(nameID)) user.setSecretQuestion(secretQuestion);
         }
     }
 
@@ -318,50 +389,96 @@ public class ListUser implements FileName {
             if (checkNull()) {
                 System.out.println("Người dùng này chưa đăng kí!");
             } else {
-                if (!getSecretQuestionByNameIDFromList(nameID).equals("null")) System.out.println("Đã cài câu hỏi bảo mật!");
+                if (!getSecretQuestionByNameIDFromList(nameID).equals("null"))
+                    System.out.println("Đã cài câu hỏi bảo mật!");
                 else {
                     setSecretQuestionByNameIDToList(nameID, secretQuestion);
                     updateListUserToFile(fileName);
                     System.out.println("Đặt câu hỏi bảo mật thành công !!!");
                 }
             }
-        } else if (!checkNull() && fileExist(fileName)){
+        } else if (!checkNull() && fileExist(fileName)) {
             setSecretQuestionByNameIDToList(nameID, secretQuestion);
             updateListUserToFile(fileName);
             System.out.println("Đặt câu hỏi bảo mật thành công !!!");
         }
     }
 
-    public void setNumGameWinByNameIDToList(String nameID, int numGameWin) {
-        for (User user : listUser) {
-            if (user.getNameID().equals(nameID)) user.setNumGameWin(numGameWin);
-        }
-    }
-    public void setUserGoldByNameIDToList(String nameID, double numGold) {
-        for (User user : listUser) {
-            if (user.checkNameID(nameID)) {
-                user.setGold(numGold);
-                break;
+    public void setNumGameWinByNameIDToFile(String fileName, String nameID, int numGameWin) {
+        if (checkNull()) {
+            //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
+            if (fileExist(fileName)) updateListUserFromFile(fileName);
+            if (checkNull()) {
+                System.out.println("Người dùng này chưa đăng kí!");
+            } else {
+                setNumGameWinByNameIDToList(nameID, numGameWin);
+                updateListUserToFile(fileName);
             }
+        } else if (!checkNull() && fileExist(fileName)) {
+            setNumGameWinByNameIDToList(nameID, numGameWin);
+            updateListUserToFile(fileName);
         }
     }
 
-    public void setUserDiamondByNameIDToList(String nameID, double numDiamond) {
-        for (User user : listUser) {
-            if (user.checkNameID(nameID)) {
-                user.setGold(numDiamond);
-                break;
+    //    public void setNickNameByNameIDToFile(String fileName, String nameID, String nickName) {
+//        if (checkNull()) {
+//            //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
+//            if (fileExist(fileName)) updateListUserFromFile(fileName);
+//            if (checkNull()) {
+//                System.out.println("Người dùng này chưa đăng kí!");
+//            } else {
+//                setNickNameByNameIDToList(nameID, nickName);
+//                updateListUserToFile(fileName);
+//            }
+//        } else if (!checkNull() && fileExist(fileName)) {
+//            setNickNameByNameIDToList(nameID, nickName);
+//            updateListUserToFile(fileName);
+//        }
+//    }
+
+    public void setUserGoldByNameIDToFile(String fileName, String nameID, double numGold) {
+        if (checkNull()) {
+            //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
+            if (fileExist(fileName)) updateListUserFromFile(fileName);
+            if (checkNull()) {
+                System.out.println("Người dùng này chưa đăng kí!");
+            } else {
+                setUserGoldByNameIDToList(nameID, numGold);
+                updateListUserToFile(fileName);
             }
+        } else if (!checkNull() && fileExist(fileName)) {
+            setUserGoldByNameIDToList(nameID, numGold);
+            updateListUserToFile(fileName);
         }
     }
 
-    //In danh sách User đã lưu ra màn hình
-    public void printAllUserFromList() {
-        int stt = 1;
-        for (User user : listUser) {
-            System.out.println("\nNgười dùng thứ " + stt + ":");
-            stt++;
-            System.out.println(user);
+    public void setUserDiamondByNameIDToFile(String fileName, String nameID, double numDiamond) {
+        if (checkNull()) {
+            //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
+            if (fileExist(fileName)) updateListUserFromFile(fileName);
+            if (checkNull()) {
+                System.out.println("Người dùng này chưa đăng kí!");
+            } else {
+                setUserDiamondByNameIDToList(nameID, numDiamond);
+                updateListUserToFile(fileName);
+            }
+        } else if (!checkNull() && fileExist(fileName)) {
+            setUserDiamondByNameIDToList(nameID, numDiamond);
+            updateListUserToFile(fileName);
+        }
+    }
+
+    //Thêm User vào list game
+    public void addUserToFile(String fileName, User user) {
+        if (checkNull()) {
+            //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
+            if (fileExist(fileName)) updateListUserFromFile(fileName);
+            addUser(user);
+            //Cập nhật vào file để lưu
+            updateListUserToFile(fileName);
+        } else if (!checkNull() && fileExist(fileName)) {
+            addUser(user);
+            updateListUserToFile(fileName);
         }
     }
 
@@ -374,24 +491,18 @@ public class ListUser implements FileName {
                 if (checkNull()) System.out.println("Chưa có User nào đăng kí!");
                 else printAllUserFromList();
             } else System.out.println("Chưa có User nào đăng kí!"); //File k tồn tại thì chắc chắn chưa lưu game nào
-        } else if (!checkNull() && fileExist(fileName)){
+        } else if (!checkNull() && fileExist(fileName)) {
             printAllUserFromList();
         }
     }
 
-    //Thêm User vào list game
-    public void addUserToFile(String fileName, User user) {
+    public void updateInformationListFromFile(String fileName) {
         if (checkNull()) {
             //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
             if (fileExist(fileName)) updateListUserFromFile(fileName);
-            addUser(user);
-            //Cập nhật vào file để lưu
-            updateListUserToFile(fileName);
-        } else if (!checkNull() && fileExist(fileName)){
-            addUser(user);
-            updateListUserToFile(fileName);
         }
     }
+
 
     //Xóa User thep STT
 
@@ -407,7 +518,7 @@ public class ListUser implements FileName {
                     updateListUserToFile(fileName);
                 }
             } else System.out.println("Chưa có User nào đăng kí!"); //File k tồn tại thì chắc chắn chưa lưu game nào
-        } else if (!checkNull() && fileExist(fileName)){
+        } else if (!checkNull() && fileExist(fileName)) {
             removeSTT(STT);
             updateListUserToFile(fileName);
         }
@@ -419,41 +530,31 @@ public class ListUser implements FileName {
             if (fileExist(fileName)) {
                 updateListUserToFile(fileName);
             } else System.out.println("Chưa có User nào đăng kí!"); //File k tồn tại thì chắc chắn chưa lưu game nào
-        } else if (!checkNull() && fileExist(fileName)){
+        } else if (!checkNull() && fileExist(fileName)) {
             removeAllUser();
             updateListUserToFile(fileName);
         }
     }
 
-    public void loginUser(User user, String fileName) {
-        if (checkNull()) {
-            //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
-            if (fileExist(fileName)) updateListUserFromFile(fileName);
-            System.out.println("====> LOGIN <====");
-            user.inputData();
-        } else if (!checkNull() && fileExist(fileName)){
-            System.out.println("====> LOGIN <====");
-            user.inputData();
-        }
-    }
-    public void registerUser(User user, String fileName) {
-        if (checkNull()) {
-            //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
-            if (fileExist(fileName)) updateListUserFromFile(fileName);
-            do {
-                System.out.println("====> REGISTER <====");
-                user.registerData();
-                //Nếu không có trong danh sách thì dừng
-                if (user.getNameID().equals("0") || !checknameIDUserFromList(user.getNameID())) break;
-                System.out.println("Tài khoản đã có người sử dụng!\nMời bạn nhập lại tài khoản khác (Bấm 0 để thoát)");
-            } while (true);
-            addUserToFile(fileName, user);
-        } else if (!checkNull() && fileExist(fileName)){
-            addUserToFile(fileName, user);
-        }
+    public void loginUser(User user) {
+        System.out.println("====> LOGIN <====");
+        user.inputData();
     }
 
-    public void askForRegister(User user, String fileName) {
+    public void registerUser(User user,ItemShop itemShop, ListItemShop listItemShop) {
+        do {
+            System.out.println("====> REGISTER <====");
+            user.registerData();
+            //Nếu không có trong danh sách thì dừng
+            if (user.getNameID().equals("0") || !checknameIDUserFromList(user.getNameID())) break;
+            System.out.println("Tài khoản đã có người sử dụng!\nMời bạn nhập lại tài khoản khác (Bấm 0 để thoát)");
+        } while (true);
+        addUserToFile(fileUser, user);
+        itemShop.setDefaultItemByNameID(user.getNameID());
+        listItemShop.addItemShopToFile(fileShop, itemShop);
+    }
+
+    public void askForRegister(User user, ItemShop itemShop, ListItemShop listItemShop) {
         int playerChoice;
         System.out.println("Bạn có muốn tạo tài khoản mới?");
 
@@ -461,7 +562,7 @@ public class ListUser implements FileName {
             System.out.println("1.Có\n2.Không");
             playerChoice = Integer.parseInt(sc.nextLine());
             if (playerChoice == 1) {
-                registerUser(user, fileName);
+                registerUser(user, itemShop, listItemShop);
                 break;
             } else if (playerChoice == 2) break;
             else {
@@ -472,19 +573,65 @@ public class ListUser implements FileName {
         System.out.println();
     }
 
-    public void changePasswordID(User user, String fileName) {
-        if (checkNull()) {
-            //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
-            if (fileExist(fileName)) updateListUserFromFile(fileName);
-            while (true) {
-                System.out.println("====> CHANGE PASSWORD <====");
-                System.out.println("Nhập mật khẩu hiện tại (Bấm 0 để thoát)");
+    public void changePasswordID(User user) {
+        while (true) {
+            System.out.println("====> CHANGE PASSWORD <====");
+            System.out.println("Nhập mật khẩu hiện tại (Bấm 0 để thoát)");
+            String temp1 = sc.nextLine();
+            if (temp1.equals("0")) break;
+            //Nếu mật khẩu đúng
+            if (checkPasswordIDByNameIDFromList(user.getNameID(), temp1)) {
+                do {
+                    System.out.println("Nhập mật khẩu mới (Bấm 0 để thoát)");
+                    String temp2 = sc.nextLine();
+                    if (temp2.equals("0")) break;
+                    System.out.println("Nhập lại mật khẩu mới");
+                    String temp3 = sc.nextLine();
+
+                    //Nếu 2 cái mật khẩu vừa nhập khác nhau => bắt nhập lại
+                    if (!temp2.equals(temp3)) {
+                        System.out.println("Hai mật khẩu không trùng khớp");
+                        System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
+                    } else {
+                        setPasswordIDByNameIDToFile(fileUser, user.getNameID(), temp3);
+                        break;
+                    }
+                } while (true);
+                break;
+            } else {
+                System.out.println("Mật khẩu hiện tại sai!");
+                System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
+            }
+        }
+
+    }
+
+    public void setSecretQuestion(User user) {
+        while (true) {
+            System.out.println("====> SECRET QUESTION <====");
+            System.out.println(questionOne + " (Bấm 0 để thoát)");
+            String temp = sc.nextLine();
+            if (temp.equals("0")) break;
+            setSecretQuestionByNameIDToFile(fileUser, user.getNameID(), temp);
+            break;
+        }
+    }
+
+    public void forgetPasswordID(User user) {
+        while (true) {
+            System.out.println("====> FORGET PASSWORD <====");
+            System.out.println("(Bấm 0 để thoát)");
+            user.inputNameID();
+            if (user.getNameID().equals("0")) break;
+            //Kiểm tra tài khoản vừa nhập có trong danh sách tài khoản đăng kí
+            if (checknameIDUserFromList(user.getNameID())) {
+                System.out.println(questionOne + " (Bấm 0 để thoát)");
                 String temp1 = sc.nextLine();
                 if (temp1.equals("0")) break;
-                //Nếu mật khẩu đúng
-                if (checkPasswordIDByNameIDFromList(user.getNameID(), temp1)) {
+                //Nếu nhập đúng câu trả lời
+                if (checkSecretQuestionByNameIDFromList(user.getNameID(), temp1)) {
                     do {
-                        System.out.println("Nhập mật khẩu mới (Bấm 0 để thoát)");
+                        System.out.println("Nhập mật khẩu mới");
                         String temp2 = sc.nextLine();
                         if (temp2.equals("0")) break;
                         System.out.println("Nhập lại mật khẩu mới");
@@ -495,155 +642,58 @@ public class ListUser implements FileName {
                             System.out.println("Hai mật khẩu không trùng khớp");
                             System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
                         } else {
-                            setPasswordIDByNameIDToFile(fileName, user.getNameID(), temp3);
+                            setPasswordIDByNameIDToFile(fileUser, user.getNameID(), temp3);
                             break;
                         }
                     } while (true);
                     break;
                 } else {
-                    System.out.println("Mật khẩu hiện tại sai!");
-                    System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
+                    System.out.println("Câu trả lời cho câu hỏi bảo mật sai !!!");
                 }
-            }
-        } else if (!checkNull() && fileExist(fileName)) {
-            while (true) {
-                System.out.println("====> CHANGE PASSWORD <====");
-                System.out.println("Nhập mật khẩu hiện tại (Bấm 0 để thoát)");
-                String temp1 = sc.nextLine();
-                if (temp1.equals("0")) break;
-                //Nếu mật khẩu đúng
-                if (checkPasswordIDByNameIDFromList(user.getNameID(), temp1)) {
-                    do {
-                        System.out.println("Nhập mật khẩu mới (Bấm 0 để thoát)");
-                        String temp2 = sc.nextLine();
-                        if (temp2.equals("0")) break;
-                        System.out.println("Nhập lại mật khẩu mới");
-                        String temp3 = sc.nextLine();
-
-                        //Nếu 2 cái mật khẩu vừa nhập khác nhau => bắt nhập lại
-                        if (!temp2.equals(temp3)) {
-                            System.out.println("Hai mật khẩu không trùng khớp");
-                            System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
-                        } else {
-                            setPasswordIDByNameIDToFile(fileName, user.getNameID(), temp3);
-                            break;
-                        }
-                    } while (true);
-                    break;
-                } else {
-                    System.out.println("Mật khẩu hiện tại sai!");
-                    System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
-                }
-            }
+            } else System.out.println("Tài khoản không tồn tại hoặc nhập sai\nMời bạn nhập lại ! (Bấm 0 để thoát)");
         }
+
     }
 
-    public void setSecretQuestion(User user, String fileName) {
+    public boolean getStatusInformationListFromFile(String fileName) {
+        boolean flag = true;
         if (checkNull()) {
             //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
             if (fileExist(fileName)) updateListUserFromFile(fileName);
-            while (true) {
-                System.out.println("====> SECRET QUESTION <====");
-                System.out.println(questionOne + " (Bấm 0 để thoát)");
-                String temp = sc.nextLine();
-                if (temp.equals("0")) break;
-                setSecretQuestionByNameIDToFile(fileName, user.getNameID(), temp);
-                break;
-            }
-        } else if (!checkNull() && fileExist(fileName)) {
-            while (true) {
-                System.out.println("====> SECRET QUESTION <====");
-                System.out.println(questionOne + " (Bấm 0 để thoát)");
-                String temp = sc.nextLine();
-                if (temp.equals("0")) break;
-                setSecretQuestionByNameIDToFile(fileName, user.getNameID(), temp);
-                break;
+            if (checkNull()) {
+                flag = false;
+                System.out.println("Chưa có User nào đăng kí!");
             }
         }
+        return flag;
     }
 
-    public void forgetPasswordID(User user, String fileName) {
+    public void showListRankUser(String fileName) {
         if (checkNull()) {
             //Kiểm tra xem file có tồn tại không, Nếu có thì cập nhật vào ArrayList
             if (fileExist(fileName)) updateListUserFromFile(fileName);
-            while (true) {
-                System.out.println("====> FORGET PASSWORD <====");
-                System.out.println("(Bấm 0 để thoát)");
-                user.inputNameID();
-                if (user.getNameID().equals("0")) break;
-                //Kiểm tra tài khoản vừa nhập có trong danh sách tài khoản đăng kí
-                if (checknameIDUserFromList(user.getNameID())) {
-                    System.out.println(questionOne + " (Bấm 0 để thoát)");
-                    String temp1 = sc.nextLine();
-                    if (temp1.equals("0")) break;
-                    //Nếu nhập đúng câu trả lời
-                    if (checkSecretQuestionByNameIDFromList(user.getNameID(), temp1)) {
-                        do {
-                            System.out.println("Nhập mật khẩu mới");
-                            String temp2 = sc.nextLine();
-                            if (temp2.equals("0")) break;
-                            System.out.println("Nhập lại mật khẩu mới");
-                            String temp3 = sc.nextLine();
-
-                            //Nếu 2 cái mật khẩu vừa nhập khác nhau => bắt nhập lại
-                            if (!temp2.equals(temp3)) {
-                                System.out.println("Hai mật khẩu không trùng khớp");
-                                System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
-                            } else {
-                                setPasswordIDByNameIDToFile(fileName, user.getNameID(), temp3);
-                                break;
-                            }
-                        } while (true);
-                        break;
-                    } else {
-                        System.out.println("Câu trả lời cho câu hỏi bảo mật sai !!!");
-                    }
-                } else System.out.println("Tài khoản không tồn tại hoặc nhập sai\nMời bạn nhập lại ! (Bấm 0 để thoát)");
+            if (checkNull()) {
+                System.out.println("Chưa có người chơi");
+            } else {
+                ArrayList<User> temp = new ArrayList<>();
+                temp.clone();
+                Collections.sort(temp, new NumGameWin());
+                int count = 1;
+                while (count <= 10 && count <= numUser()) {
+                    System.out.println(count + ". Biệt danh: " + temp.get(count - 1).getNamePlayer()
+                            + "|TK: " + temp.get(count - 1).getNameID() + "|Số game win: " + temp.get(count - 1).getNumGameWin());
+                    count++;
+                }
             }
         } else if (!checkNull() && fileExist(fileName)) {
-            while (true) {
-                System.out.println("====> FORGET PASSWORD <====");
-                System.out.println("Nhập tài khoản: (Bấm 0 để thoát)");
-                user.inputNameID();
-                if (user.getNameID().equals("0")) break;
-                //Kiểm tra tài khoản vừa nhập có trong danh sách tài khoản đăng kí
-                if (checknameIDUserFromList(user.getNameID())) {
-                    System.out.println(questionOne + " (Bấm 0 để thoát)");
-                    String temp1 = sc.nextLine();
-                    if (temp1.equals("0")) break;
-                    //Nếu nhập đúng câu trả lời
-                    if (checkSecretQuestionByNameIDFromList(user.getNameID(), temp1)) {
-                        do {
-                            System.out.println("Nhập mật khẩu mới");
-                            String temp2 = sc.nextLine();
-                            if (temp2.equals("0")) break;
-                            System.out.println("Nhập lại mật khẩu mới");
-                            String temp3 = sc.nextLine();
-
-                            //Nếu 2 cái mật khẩu vừa nhập khác nhau => bắt nhập lại
-                            if (!temp2.equals(temp3)) {
-                                System.out.println("Hai mật khẩu không trùng khớp");
-                                System.out.println("Mời bạn nhập lại ! (Bấm 0 để thoát)");
-                            } else {
-                                setPasswordIDByNameIDToFile(fileName, user.getNameID(), temp3);
-                                break;
-                            }
-                        } while (true);
-                        break;
-                    } else {
-                        System.out.println("Câu trả lời cho câu hỏi bảo mật sai !!!");
-                    }
-                } else System.out.println("Tài khoản không tồn tại hoặc nhập sai\nMời bạn nhập lại ! (Bấm 0 để thoát)");
+            ArrayList<User> temp = (ArrayList<User>) listUser.clone();
+            Collections.sort(temp, new NumGameWin());
+            int count = 1;
+            while (count <= 10 && count <= numUser()) {
+                System.out.println(count + ". Biệt danh: " + temp.get(count - 1).getNamePlayer()
+                        + "|TK: " + temp.get(count - 1).getNameID() + "|Số game win: " + temp.get(count - 1).getNumGameWin());
+                count++;
             }
         }
-    }
-
-
-    public void updateInformationUserFromList(User user) {
-        user.setNamePlayer(getNamePlayerByNameIDFromList(user.getNameID()));
-        user.setNumGameWin(getNumGameWinByNameIDFromList(user.getNameID()));
-        user.setGold(getGoldPlayerByNameIDFromList(user.getNameID()));
-        user.setDiamond(getDiamondPlayerByNameIDFromList(user.getNameID()));
-        user.setSecretQuestion(getSecretQuestionByNameIDFromList(user.getNameID()));
     }
 }

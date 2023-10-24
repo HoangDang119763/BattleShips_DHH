@@ -197,7 +197,7 @@ public class ListGameBattleShips {
     //
 
     //Hỏi việc lưu game hoàn thành của User ?
-    public void askForSaveGameDone(String nameID, Map gridPlayer) {
+    public void askForSaveGameDone(User user, Map gridPlayer) {
         int playerChoice;
         System.out.println("Bạn có muốn lưu không ?");
         System.out.println("1.Có\t0.Không");
@@ -206,7 +206,31 @@ public class ListGameBattleShips {
             playerChoice = Integer.parseInt(sc.nextLine());
             switch (playerChoice) {
                 case 1:
-                    addGameByNameIDToFile(nameID, ".txt", gridPlayer);
+                    //if (numGame() < user.getSavedGameLimited()) addGameByNameIDToFile(user.getNameID(), ".txt", gridPlayer);
+                    //else System.out.println("Bạn đã đạt giới hạn lưu GAME!");
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Lựa chọn không hợp lệ!");
+                    System.out.println("Mời bạn nhập lại");
+                    break;
+            }
+        } while (playerChoice != 1 && playerChoice != 0);
+        System.out.println("----> **** <----");
+    }
+
+    public void askForSaveGameDone(User user, Map gridPlayer, ListItemShop listItemShop) {
+        int playerChoice;
+        System.out.println("Bạn có muốn lưu không ?");
+        System.out.println("1.Có\t0.Không");
+
+        do {
+            playerChoice = Integer.parseInt(sc.nextLine());
+            switch (playerChoice) {
+                case 1:
+                    if (numGame() < listItemShop.getSavedGameLimitedByNameIDFromList(user.getNameID())) addGameByNameIDToFile(user.getNameID(), ".txt", gridPlayer);
+                    else System.out.println("Bạn đã đạt giới hạn lưu GAME!");
                     break;
                 case 0:
                     break;

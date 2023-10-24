@@ -7,10 +7,12 @@ public class User implements Serializable {
     private String nameID;//Tài khoản
     private String passwordID;//Mật khẩu
     private String namePlayer;//Tên người dùng
-    private String secretQuestion;
+    private String secretQuestion; //Câu hỏi bảo mật
 
-    private int numGameWin;
+    private int numGameWin; //Số game win
+/*    private int savedGameLimited;
 
+    private String nickName;*/
     //Phần tiền tệ
     private double gold;
     private double diamond;
@@ -88,13 +90,21 @@ public class User implements Serializable {
         this.numGameWin = numGameWin;
     }
 
-    public NumberFormat getNumf() {
-        return numf;
+    /*public int getSavedGameLimited() {
+        return savedGameLimited;
     }
 
-    public void setNumf(NumberFormat numf) {
-        this.numf = numf;
+    public void setSavedGameLimited(int savedGameLimited) {
+        this.savedGameLimited = savedGameLimited;
     }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }*/
 
     //Đăng nhập: Chỉ nhập TK + MK
     public void inputData() {
@@ -133,21 +143,24 @@ public class User implements Serializable {
         setGold(500);
         setDiamond(0);
         setSecretQuestion("null");
+        setNumGameWin(0);
+        //setSavedGameLimited(5);
+        //setNickName("Normal Player");
     }
 
     //Kiểm tra tài khoản
     public boolean checkNameID(String nameID) {
-        return nameID.equals(getNameID());
+        return getNameID().equals(nameID);
     }
 
     //Kiểm tra mật khẩu
     public boolean checkPasswordID(String passwordID) {
-        return passwordID.equals(getPasswordID());
+        return getPasswordID().equals(passwordID);
     }
 
     //Kiểm tra câu hỏi bảo mật
     public boolean checkSecretQuetion(String secretQuestion) {
-        return secretQuestion.equals(getSecretQuestion());
+        return getSecretQuestion().equals(secretQuestion);
     }
 
     public boolean checkNumGameWin(int numGameWin) {
@@ -182,15 +195,34 @@ public class User implements Serializable {
     }
     public void printInformationUser() {
         System.out.println("====> INFORMATION <====");
-        System.out.println("Biệt danh: " + this.getNamePlayer());
+        System.out.println("Tên người dùng: " + this.getNamePlayer());
+        //System.out.println("Biệt hiệu: " + this.getNickName());
         System.out.println("TK: " + this.getNameID());
         System.out.println("MK: ********");
         System.out.println("Gold: " + Gold());
         System.out.println("Diamond: " + Diamond());
-        System.out.println("====> **** <====");
+        //System.out.println("Giới hạn lưu GAME hiện tại: " + getSavedGameLimited());
+        System.out.println("----> **** <----");
         System.out.println("1.Đổi mật khẩu");
         System.out.println("2.Đặt câu hỏi bảo mật");
-        System.out.println("3.Bạn bè");
+        //System.out.println("3.Bạn bè");
+        System.out.println("0.Thoát");
+        //System.out.println("Giới hạn lưu GAME hiện tại: " + getSaveGameLimited());
+    }
+
+    public void printInformationUser(ListItemShop listItemShop) {
+        System.out.println("====> INFORMATION <====");
+        System.out.println("Tên người dùng: " + this.getNamePlayer());
+        System.out.println("Biệt hiệu: " + listItemShop.getNickNameByNameIDFromList(this.getNameID()));
+        System.out.println("TK: " + this.getNameID());
+        System.out.println("MK: ********");
+        System.out.println("Gold: " + Gold());
+        System.out.println("Diamond: " + Diamond());
+        System.out.println("Giới hạn lưu GAME hiện tại: " + listItemShop.getSavedGameLimitedByNameIDFromList(this.getNameID()));
+        System.out.println("----> **** <----");
+        System.out.println("1.Đổi mật khẩu");
+        System.out.println("2.Đặt câu hỏi bảo mật");
+        //System.out.println("3.Bạn bè");
         System.out.println("0.Thoát");
         //System.out.println("Giới hạn lưu GAME hiện tại: " + getSaveGameLimited());
     }
